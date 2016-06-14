@@ -19,13 +19,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         FIRApp.configure()//in vid
         
-        //below mark included the word true but facebook documentation does not have that
+                //below mark included the word true but facebook documentation does not have that
+        
+                // uses fb to check if we are logged in or not
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
 
-        return true
+        return true     //no sure if I should return true or return line above
     }
     
-    //I added this func
+    //I added this func this will open url when you register for the first time
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
         return FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation)
     }
@@ -45,6 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(application: UIApplication) {
+            //reactivates fb if needed
         FBSDKAppEvents.activateApp()
     }
 

@@ -26,6 +26,9 @@
 		A100E7251D09D53200E0FE97 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A100E7221D09D53200E0FE97 /* FBSDKCoreKit.framework */; };
 		A100E7261D09D53200E0FE97 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A100E7231D09D53200E0FE97 /* FBSDKLoginKit.framework */; };
 		A100E72B1D0A06F700E0FE97 /* DataService2.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100E72A1D0A06F700E0FE97 /* DataService2.swift */; };
+		A100E72D1D0B834F00E0FE97 /* FeedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100E72C1D0B834F00E0FE97 /* FeedVC.swift */; };
+		A100E72F1D0B847300E0FE97 /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100E72E1D0B847300E0FE97 /* PostCell.swift */; };
+		A100E7311D0F7AFB00E0FE97 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100E7301D0F7AFB00E0FE97 /* Post.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +53,9 @@
 		A100E7221D09D53200E0FE97 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
 		A100E7231D09D53200E0FE97 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		A100E72A1D0A06F700E0FE97 /* DataService2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataService2.swift; sourceTree = "<group>"; };
+		A100E72C1D0B834F00E0FE97 /* FeedVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedVC.swift; sourceTree = "<group>"; };
+		A100E72E1D0B847300E0FE97 /* PostCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
+		A100E7301D0F7AFB00E0FE97 /* Post.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		C0CC881BA2D12A48AEEE956B /* Pods_chris_showCase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_chris_showCase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C948CC856F0640DA4944566A /* Pods-chris-showCase.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-chris-showCase.debug.xcconfig"; path = "Pods/Target Support Files/Pods-chris-showCase/Pods-chris-showCase.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -115,7 +121,6 @@
 				A100E70C1D08E46E00E0FE97 /* View */,
 				A100E70B1D08E46700E0FE97 /* Controller */,
 				A100E6F71D08CB8C00E0FE97 /* AppDelegate.swift */,
-				A100E6F91D08CB8C00E0FE97 /* ViewController.swift */,
 				A100E6FB1D08CB8C00E0FE97 /* Main.storyboard */,
 				A100E6FE1D08CB8C00E0FE97 /* Assets.xcassets */,
 				A100E7001D08CB8C00E0FE97 /* LaunchScreen.storyboard */,
@@ -128,6 +133,8 @@
 		A100E70B1D08E46700E0FE97 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				A100E6F91D08CB8C00E0FE97 /* ViewController.swift */,
+				A100E72C1D0B834F00E0FE97 /* FeedVC.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -138,6 +145,7 @@
 				A100E7171D0924A500E0FE97 /* MaterialView.swift */,
 				A100E71C1D092AB000E0FE97 /* MaterialButton.swift */,
 				A100E71E1D09378000E0FE97 /* MaterialTextField.swift */,
+				A100E72E1D0B847300E0FE97 /* PostCell.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -145,6 +153,7 @@
 		A100E70D1D08E47500E0FE97 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				A100E7301D0F7AFB00E0FE97 /* Post.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -317,9 +326,12 @@
 				A100E7181D0924A500E0FE97 /* MaterialView.swift in Sources */,
 				A100E6FA1D08CB8C00E0FE97 /* ViewController.swift in Sources */,
 				A100E6F81D08CB8C00E0FE97 /* AppDelegate.swift in Sources */,
+				A100E72D1D0B834F00E0FE97 /* FeedVC.swift in Sources */,
+				A100E72F1D0B847300E0FE97 /* PostCell.swift in Sources */,
 				A100E71B1D09251000E0FE97 /* Constants.swift in Sources */,
 				A100E71D1D092AB000E0FE97 /* MaterialButton.swift in Sources */,
 				A100E72B1D0A06F700E0FE97 /* DataService2.swift in Sources */,
+				A100E7311D0F7AFB00E0FE97 /* Post.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
