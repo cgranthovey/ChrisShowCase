@@ -11,7 +11,6 @@ import Firebase
 
 let URL_BASE = FIRDatabase.database().reference()       //this gets the DATABASE_URL from the GoogleServices-Info.plist
 
-
 //thi is a place where we can store references to firebase
 //singleton - single instance of an object or class that we have access to
 class DataService{

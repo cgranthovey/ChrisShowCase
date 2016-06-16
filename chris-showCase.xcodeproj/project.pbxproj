@@ -29,6 +29,7 @@
 		A100E72D1D0B834F00E0FE97 /* FeedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100E72C1D0B834F00E0FE97 /* FeedVC.swift */; };
 		A100E72F1D0B847300E0FE97 /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100E72E1D0B847300E0FE97 /* PostCell.swift */; };
 		A100E7311D0F7AFB00E0FE97 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100E7301D0F7AFB00E0FE97 /* Post.swift */; };
+		A100E7331D11C9A700E0FE97 /* materialImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100E7321D11C9A700E0FE97 /* materialImage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +57,7 @@
 		A100E72C1D0B834F00E0FE97 /* FeedVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedVC.swift; sourceTree = "<group>"; };
 		A100E72E1D0B847300E0FE97 /* PostCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
 		A100E7301D0F7AFB00E0FE97 /* Post.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
+		A100E7321D11C9A700E0FE97 /* materialImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = materialImage.swift; sourceTree = "<group>"; };
 		C0CC881BA2D12A48AEEE956B /* Pods_chris_showCase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_chris_showCase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C948CC856F0640DA4944566A /* Pods-chris-showCase.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-chris-showCase.debug.xcconfig"; path = "Pods/Target Support Files/Pods-chris-showCase/Pods-chris-showCase.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -146,6 +148,7 @@
 				A100E71C1D092AB000E0FE97 /* MaterialButton.swift */,
 				A100E71E1D09378000E0FE97 /* MaterialTextField.swift */,
 				A100E72E1D0B847300E0FE97 /* PostCell.swift */,
+				A100E7321D11C9A700E0FE97 /* materialImage.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -322,6 +325,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A100E7331D11C9A700E0FE97 /* materialImage.swift in Sources */,
 				A100E71F1D09378100E0FE97 /* MaterialTextField.swift in Sources */,
 				A100E7181D0924A500E0FE97 /* MaterialView.swift in Sources */,
 				A100E6FA1D08CB8C00E0FE97 /* ViewController.swift in Sources */,
