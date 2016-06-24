@@ -18,10 +18,14 @@ class PostCell: UITableViewCell {
     @IBOutlet weak var descriptionText: UITextView!
     @IBOutlet weak var likesLbl: UILabel!
     @IBOutlet weak var likeImg: UIImageView!
+    @IBOutlet weak var username: UILabel!
+    @IBOutlet weak var deleteBtn: UIButton!
+    @IBOutlet weak var editBtn: UIButton!
     
     var post: Post! //we need to store post
     var request: Request?   //reason we need to store Alamo fire request is b/c we need to cancel it, normally don't need to store request
     var likeRef: FIRDatabaseReference!
+    var usersPostRef: FIRDatabaseReference!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -42,8 +46,10 @@ class PostCell: UITableViewCell {
     func configureCell(post: Post, img: UIImage?){      //passing in an image if it exists
         self.post = post
         self.likeRef = DataService.ds.REF_USERS_CURRENT.child("likes").child(post.postKey)
+        self.usersPostRef = DataService.ds.REF_USERS_CURRENT.child("Posts").child(post.postKey)
         self.descriptionText.text = post.postDescription
         self.likesLbl.text = "\(post.likes)"
+        self.username.text = post.userName
         
         if post.imageUrl != nil{
             self.showcaseImg.hidden = false
@@ -63,7 +69,33 @@ class PostCell: UITableViewCell {
             self.showcaseImg.hidden = true
         }
         
+        if post.profileImageUrl != nil{
+            self.profileImg.hidden = false
+            if let img = FeedVC.imageCache.objectForKey(post.profileImageUrl!) as? UIImage{
+                self.profileImg.image = img
+            } else{
+                request = Alamofire.request(.GET, post.profileImageUrl!).validate(contentType: ["image/*"]).response(completionHandler: {request, response, data, err in
+                    if err == nil{
+                        if let img1 = UIImage(data: data!){
+                            self.profileImg.image = img1
+                            FeedVC.imageCache.setObject(img1, forKey: self.post.profileImageUrl!)
+                        }
+                    }
+                })
+            }
+        } else{
+            self.profileImg.hidden = true
+        }
         
+        usersPostRef.observeEventType(.Value, withBlock: { snapshot in
+            if let doesNotExist = snapshot.value as? NSNull{
+                self.deleteBtn.hidden = true
+                self.editBtn.hidden = true
+            } else{
+                self.deleteBtn.hidden = false
+                self.editBtn.hidden = false
+            }
+        })
         
         likeRef.observeSingleEventOfType(.Value, withBlock: { snapshot in
             if let doesNotExist = snapshot.value as? NSNull{    //in firebase, data that doesn't exist is an NSNull
@@ -89,11 +121,21 @@ class PostCell: UITableViewCell {
             }
         })
     }
+    
+
+    
+    @IBAction func deleteCell(sender: UIButton){
+        FeedVC().deleteKey(post.postKey)
+    }
+    
+    @IBAction func editBtnPress(sender: UIButton){
+        var dictionary = ["disc": post.postDescription, "key": post.postKey]
+
+        NSNotificationCenter.defaultCenter().postNotificationName("editBtnNotification", object: nil, userInfo: [NSObject():dictionary])
+        //FeedVC().editKey(post.postDescription, postKeyA: post.postKey)
+    }
+    
 }
-
-
-
-
 
 
 

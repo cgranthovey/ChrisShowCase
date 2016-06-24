@@ -40,7 +40,6 @@ class ViewController: UIViewController {
                 let accessToken = FBSDKAccessToken.currentAccessToken().tokenString
                 print("successfully logged in with fb \(accessToken)")
                 
-                
                 // if user logs in w/ facebook or email we still need to give them a firebase id.  we want to store on our device the token of the firebase user so next time they log in they won't have to type in a password
                 let credential = FIRFacebookAuthProvider.credentialWithAccessToken(FBSDKAccessToken.currentAccessToken().tokenString)
                 //we now have the credential, now need to authenticate with firebase using that credential
@@ -79,10 +78,10 @@ class ViewController: UIViewController {
                                 self.showErrorAlerts("Could not create account", msg: "Problem creating account.  Try something else")
                             } else{     //if we don't receive an error then we can log the user in
                                 NSUserDefaults.standardUserDefaults().setValue(user!.uid, forKey: KEY_UID)  //saving the user ID
-                                let userData = ["provider": "email", "blah": "email test"]
+                                let userData = ["provider": "email", "posts": "email test"]
                                 DataService.ds.createFirebaseUser(user!.uid, user: userData)
                                 
-                                self.performSegueWithIdentifier(SEGUE_LOGGED_IN, sender: nil)
+                                self.performSegueWithIdentifier(SEGUE_USERNAME, sender: nil)
                             }
                     })
                     } else{
@@ -97,8 +96,6 @@ class ViewController: UIViewController {
         }
     }
     
-    
-    //
     func showErrorAlerts(title: String, msg: String){
         let alert = UIAlertController(title: title, message: msg, preferredStyle: .Alert)
         let action = UIAlertAction(title: "Ok", style: .Default, handler: nil)

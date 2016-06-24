@@ -16,6 +16,10 @@ let KEY_UID = "uid"
 
 //Segues
 let SEGUE_LOGGED_IN = "loggedIn"
+let SEGUE_USERNAME = "AddUserName"
+let SEGUE_USERNAME_TO_FEEDVC = "usernameToFeedVC"
 
 //Status Codes
 let STATUS_ACCOUNT_NONEXIST = 17011
+
+typealias DownloadComplete = () -> ()

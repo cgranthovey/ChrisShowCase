@@ -10,12 +10,10 @@ import UIKit
 import Firebase
 import Alamofire
 
-class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
 
     @IBOutlet weak var tableView: UITableView!
-   // var imagePicker: UIImagePickerController!
     var posts = [Post]()    //we initialize this as empty b/c numberOfRowsInSection will look at this
-    
     
     @IBOutlet weak var postField: MaterialTextField!
     @IBOutlet weak var imageSelectorImg: UIImageView!
@@ -24,42 +22,85 @@ class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIIm
     
     var imgPicker: UIImagePickerController!
     
+    var currentUsername = String()
+
+    
     static var imageCache = NSCache()  //static means one instance in memory that can be accessed from anywhere
+    
+    override func viewWillAppear(animated: Bool) {
+        
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        postField.delegate = self
         tableView.delegate = self
         tableView.dataSource = self
-        
+        print("mouse")
+        print(tableView)
+        print("cat")
         tableView.estimatedRowHeight = 377
         
         imgPicker = UIImagePickerController()
         imgPicker.delegate = self
         
-   //     imagePicker = UIImagePickerController()
- //       imagePicker.delegate = self
-        
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(FeedVC.dismissKeyboard))
+        self.view.addGestureRecognizer(tap)
         //below is a closure, so it won't be called right away, only when data changes.  Even though this is in viewDidLoad it will be called over and over again.  .Value below gives us whole entire list of posts.  So we need to repopulate entire list when new data comes in
+        
+        var dictionaryOfUser = Dictionary<String, AnyObject>()
+
+        DataService.ds.REF_USERS.observeEventType(.Value, withBlock: { snapshotA in
+            if let snapshotter = snapshotA.value as? Dictionary<String, AnyObject>{
+                dictionaryOfUser = snapshotter
+                print("woot")
+                print(dictionaryOfUser)
+            }
+            self.tableView.reloadData()
+            print("potter")
+            
+        })
+        
+        
+        
         DataService.ds.REF_POSTS.observeEventType(.Value, withBlock: { snapshot in
-            print("first")
             print(snapshot.value)        //data that is in the snapshot of our data
-            print("second")
             self.posts = [] //we are going to completely clear out posts when we update b/c we need to replace all the data
             
             if let snapshots = snapshot.children.allObjects as? [FIRDataSnapshot]{
                 for snap in snapshots{
-                    print ("SNAP: \(snap)")
-                    
                     if let postDict = snap.value as? Dictionary<String, AnyObject>{
                         let key = snap.key
-                        let post = Post(postKey: key, dictionary: postDict)
-                        self.posts.append(post)
+                        
+                        if let id = postDict["userID"] as? String{
+                            if let tempDict = dictionaryOfUser[id] as? Dictionary<String, AnyObject>{
+                                print("cannon")
+                                print(tempDict)
+                                let post = Post(postKey: key, dictionary: postDict, userInfo: tempDict)     //passing in the userinfo for the user that made that post
+                                self.posts.append(post)
+                            }
+                        }
+                        print("it's me")
                     }
                 }
             }
+            print("heyo")
             self.tableView.reloadData()
         })
+
+        DataService.ds.REF_USERS_CURRENT.child("userName").observeEventType(.Value, withBlock: { snapshot in
+            if let doesNotExist = snapshot.value as? NSNull{
+                print("I'm null")
+            } else{
+                self.currentUsername = (snapshot.value as? String)!
+            }
+        })
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(FeedVC.editKey(_:)), name: "editBtnNotification", object: nil)
+    }
+    
+    func lookAtSnapshot(completed: DownloadComplete){
         
     }
 
@@ -78,9 +119,8 @@ class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIIm
         if let cell = tableView.dequeueReusableCellWithIdentifier("PostCell") as? PostCell{
             cell.request?.cancel()      //if we are scrolling through and reusing a cell that has appeared before which is still making a request, we want to cancel that request b/c it is not good for the image we want
             var img: UIImage?
-            print(img)
             if let url = post.imageUrl{
-                img = FeedVC.imageCache.objectForKey(url) as? UIImage //we are using name FeedVC instead of like self b/c it is publically available and it's static.  Url is our key b/c it is unique.  So the ideea is we are going to check the cache to see if we already have the image, and if we don't we'll download it
+                img = FeedVC.imageCache.objectForKey(url) as? UIImage //we are using name FeedVC instead of like self b/c it is publically available and it's static.  Url is our key b/c it is unique.  So the idea is we are going to check the cache to see if we already have the image, and if we don't we'll download it
             }
             
             cell.configureCell(post, img: img)  //if above code doesn't work we will pass in an empty image
@@ -110,6 +150,7 @@ class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIIm
     }
     
     @IBAction func makePost(sender: AnyObject) {
+        textFieldShouldReturn(postField)
         if let txt = postField.text where txt != ""{
             if let img = imageSelectorImg.image where imageSelectorImg.image != UIImage(named: "camera"){       //verifying here that we have an imag and that img is not default cam img
                 let urlString = "https://post.imageshack.us/upload_api.php"
@@ -149,6 +190,8 @@ class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIIm
         //create format of data we want
         var post: Dictionary<String, AnyObject> = [
             "Description": postField.text!,
+            "userName": self.currentUsername,
+            "userID": NSUserDefaults.standardUserDefaults().valueForKey(KEY_UID)!,
             "Likes": 0
         ]
         
@@ -160,10 +203,53 @@ class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIIm
         let firebasePost = DataService.ds.REF_POSTS.childByAutoId()
         firebasePost.setValue(post)
         
+        //////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////
+        let recordPostInUser = DataService.ds.REF_USERS_CURRENT.child("Posts").child(firebasePost.key)
+        recordPostInUser.setValue(true)
+        //////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////
+        
         postField.text = ""
         imageSelectorImg.image = UIImage(named: "camera")
         tableView.reloadData()
     }
+
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return false
+    }
+    
+    func dismissKeyboard() {
+        //Causes the view (or one of its embedded text fields) to resign the first responder status.
+        view.endEditing(true)
+    }
+    
+    func deleteKey(postKeyA: String){
+        DataService.ds.REF_POSTS.child(postKeyA).removeValue()
+    }
+    
+    func editKey(notification: NSNotification){
+        let postDesc = notification.userInfo!["disc"] as? String
+        let postKey = notification.userInfo!["key"] as? String
+        print(notification.userInfo)
+        print("ahhh \(postDesc)")
+        print("keyyy \(postKey)")
+        self.postField.text = postDesc
+        self.postField.becomeFirstResponder()
+        // DataService.ds.REF_POSTS.child(postKeyA).setValue()
+    }
+
+    
+    
+    @IBAction func settingsPage(sender: AnyObject){
+        performSegueWithIdentifier("SettingVC", sender: nil)
+    }
+    
+    
+    
     
     
 }

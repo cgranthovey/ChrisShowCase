@@ -17,5 +17,4 @@ class MaterialView: UIView {
         layer.shadowRadius = 5.0
         layer.shadowOffset = CGSizeMake(0.0, 2.0)//the shadow on the left and right will be 0 and it will go down 2px.  However since we have a shadow radius of 5 then it will extend on the left and right sides.
     }
-
 }

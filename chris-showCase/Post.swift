@@ -12,10 +12,12 @@ import Firebase
 class Post{
     private var _postDescription: String!
     private var _imageUrl: String?
+    private var _profileImageUrl: String?
     private var _likes: Int!
     private var _username: String!
     private var _postKey: String!
     private var _postRef: FIRDatabaseReference!
+    private var _userID: String!
     
     var postDescription: String{
         return _postDescription
@@ -25,16 +27,27 @@ class Post{
         return _imageUrl
     }
     
+    var profileImageUrl: String?{
+        return _profileImageUrl
+    }
+    
     var likes: Int{
         return _likes
     }
     
     var userName: String{
+        if _username == nil{
+            _username = ""
+        }
         return _username
     }
     
     var postKey: String{
         return _postKey
+    }
+    
+    var userID: String{
+        return _userID
     }
     
     init(description: String, imgUrl: String?, username: String){
@@ -45,7 +58,7 @@ class Post{
     
     //we want to convert data from firebase into a dictionary,  when we grab data from firebase we will pass in dictionary,parse data out so we can use it
     
-    init(postKey: String, dictionary: Dictionary<String, AnyObject>){
+    init(postKey: String, dictionary: Dictionary<String, AnyObject>, userInfo: Dictionary<String, AnyObject>){
         self._postKey = postKey
         
         if let likes = dictionary["Likes"] as? Int{
@@ -56,8 +69,20 @@ class Post{
             self._imageUrl = imgURL
         }
         
+        if let profileImgURL = userInfo["imageURL"] as? String{
+            self._profileImageUrl = profileImgURL
+        }
+        
         if let description = dictionary["Description"] as? String{
             self._postDescription = description
+        }
+        
+        if let username = userInfo["userName"] as? String{
+            self._username = username
+        }
+        
+        if let userid = dictionary["userID"] as? String{
+            self._userID = userid
         }
         
         self._postRef = DataService.ds.REF_POSTS.child(self._postKey)
