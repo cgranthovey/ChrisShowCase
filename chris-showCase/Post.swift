@@ -18,6 +18,7 @@ class Post{
     private var _postKey: String!
     private var _postRef: FIRDatabaseReference!
     private var _userID: String!
+    private var _comment: Dictionary<String, Dictionary<String, String>>!
     
     var postDescription: String{
         return _postDescription
@@ -50,6 +51,13 @@ class Post{
         return _userID
     }
     
+    var comment: Dictionary<String, Dictionary<String, String>>!{
+        if _comment == nil{
+            _comment = Dictionary()
+        }
+        return _comment
+    }
+    
     init(description: String, imgUrl: String?, username: String){
         self._postDescription = description
         self._imageUrl = imgUrl
@@ -71,6 +79,11 @@ class Post{
         
         if let profileImgURL = userInfo["imageURL"] as? String{
             self._profileImageUrl = profileImgURL
+        }
+        
+        if let comment = dictionary["Comments"] as? Dictionary<String, Dictionary<String, String>>{
+            self._comment = comment
+            print("eagle \(self._comment)")
         }
         
         if let description = dictionary["Description"] as? String{

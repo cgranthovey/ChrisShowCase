@@ -32,6 +32,9 @@
 		A100E7331D11C9A700E0FE97 /* materialImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100E7321D11C9A700E0FE97 /* materialImage.swift */; };
 		A1B5919D1D19B68200F78061 /* SettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B5919C1D19B68200F78061 /* SettingVC.swift */; };
 		A1B5919F1D19DD4F00F78061 /* AddUserName.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B5919E1D19DD4F00F78061 /* AddUserName.swift */; };
+		A1F050441D21B8C700B7E4BF /* CommentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F050431D21B8C700B7E4BF /* CommentVC.swift */; };
+		A1F050461D21BA7E00B7E4BF /* CommentsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F050451D21BA7E00B7E4BF /* CommentsCell.swift */; };
+		A1F72D191D22F3A800E07E9C /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F72D181D22F3A800E07E9C /* Comment.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +65,9 @@
 		A100E7321D11C9A700E0FE97 /* materialImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = materialImage.swift; sourceTree = "<group>"; };
 		A1B5919C1D19B68200F78061 /* SettingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingVC.swift; sourceTree = "<group>"; };
 		A1B5919E1D19DD4F00F78061 /* AddUserName.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddUserName.swift; sourceTree = "<group>"; };
+		A1F050431D21B8C700B7E4BF /* CommentVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentVC.swift; sourceTree = "<group>"; };
+		A1F050451D21BA7E00B7E4BF /* CommentsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsCell.swift; sourceTree = "<group>"; };
+		A1F72D181D22F3A800E07E9C /* Comment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		C0CC881BA2D12A48AEEE956B /* Pods_chris_showCase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_chris_showCase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C948CC856F0640DA4944566A /* Pods-chris-showCase.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-chris-showCase.debug.xcconfig"; path = "Pods/Target Support Files/Pods-chris-showCase/Pods-chris-showCase.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -142,6 +148,7 @@
 				A100E6F91D08CB8C00E0FE97 /* ViewController.swift */,
 				A1B5919E1D19DD4F00F78061 /* AddUserName.swift */,
 				A100E72C1D0B834F00E0FE97 /* FeedVC.swift */,
+				A1F050431D21B8C700B7E4BF /* CommentVC.swift */,
 				A1B5919C1D19B68200F78061 /* SettingVC.swift */,
 			);
 			name = Controller;
@@ -155,6 +162,7 @@
 				A100E71E1D09378000E0FE97 /* MaterialTextField.swift */,
 				A100E7321D11C9A700E0FE97 /* materialImage.swift */,
 				A100E72E1D0B847300E0FE97 /* PostCell.swift */,
+				A1F050451D21BA7E00B7E4BF /* CommentsCell.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -163,6 +171,7 @@
 			isa = PBXGroup;
 			children = (
 				A100E7301D0F7AFB00E0FE97 /* Post.swift */,
+				A1F72D181D22F3A800E07E9C /* Comment.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -332,6 +341,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A100E7331D11C9A700E0FE97 /* materialImage.swift in Sources */,
+				A1F050461D21BA7E00B7E4BF /* CommentsCell.swift in Sources */,
 				A1B5919D1D19B68200F78061 /* SettingVC.swift in Sources */,
 				A1B5919F1D19DD4F00F78061 /* AddUserName.swift in Sources */,
 				A100E71F1D09378100E0FE97 /* MaterialTextField.swift in Sources */,
@@ -341,8 +351,10 @@
 				A100E72D1D0B834F00E0FE97 /* FeedVC.swift in Sources */,
 				A100E72F1D0B847300E0FE97 /* PostCell.swift in Sources */,
 				A100E71B1D09251000E0FE97 /* Constants.swift in Sources */,
+				A1F72D191D22F3A800E07E9C /* Comment.swift in Sources */,
 				A100E71D1D092AB000E0FE97 /* MaterialButton.swift in Sources */,
 				A100E72B1D0A06F700E0FE97 /* DataService2.swift in Sources */,
+				A1F050441D21B8C700B7E4BF /* CommentVC.swift in Sources */,
 				A100E7311D0F7AFB00E0FE97 /* Post.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

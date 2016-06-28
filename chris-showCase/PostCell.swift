@@ -15,12 +15,17 @@ class PostCell: UITableViewCell {
 
     @IBOutlet weak var profileImg: UIImageView!
     @IBOutlet weak var showcaseImg: UIImageView!
-    @IBOutlet weak var descriptionText: UITextView!
+    @IBOutlet weak var descTextLbl: UILabel!
+    
     @IBOutlet weak var likesLbl: UILabel!
     @IBOutlet weak var likeImg: UIImageView!
     @IBOutlet weak var username: UILabel!
     @IBOutlet weak var deleteBtn: UIButton!
     @IBOutlet weak var editBtn: UIButton!
+    
+    @IBOutlet weak var bottomSpace: UIView!
+    
+    
     
     var post: Post! //we need to store post
     var request: Request?   //reason we need to store Alamo fire request is b/c we need to cancel it, normally don't need to store request
@@ -47,7 +52,9 @@ class PostCell: UITableViewCell {
         self.post = post
         self.likeRef = DataService.ds.REF_USERS_CURRENT.child("likes").child(post.postKey)
         self.usersPostRef = DataService.ds.REF_USERS_CURRENT.child("Posts").child(post.postKey)
-        self.descriptionText.text = post.postDescription
+        
+        
+        self.descTextLbl.text = post.postDescription
         self.likesLbl.text = "\(post.likes)"
         self.username.text = post.userName
         
@@ -68,7 +75,7 @@ class PostCell: UITableViewCell {
         } else {
             self.showcaseImg.hidden = true
         }
-        
+        print("my prof image \(post.profileImageUrl)")
         if post.profileImageUrl != nil{
             self.profileImg.hidden = false
             if let img = FeedVC.imageCache.objectForKey(post.profileImageUrl!) as? UIImage{
@@ -91,9 +98,11 @@ class PostCell: UITableViewCell {
             if let doesNotExist = snapshot.value as? NSNull{
                 self.deleteBtn.hidden = true
                 self.editBtn.hidden = true
+//                self.bottomSpace.hidden = true
             } else{
                 self.deleteBtn.hidden = false
                 self.editBtn.hidden = false
+//                self.bottomSpace.hidden = false
             }
         })
         
@@ -122,7 +131,16 @@ class PostCell: UITableViewCell {
         })
     }
     
+    @IBAction func commentsBtn(sender: AnyObject){
+        print("nice")
+//        print("1 I'm called now rhino\(post.comment)")
+//        var dictionary = post.comment
+        let myPost = post
+//        NSNotificationCenter.defaultCenter().postNotificationName("segueToCommentsNotification", object: nil, userInfo: dictionary)
+        NSNotificationCenter.defaultCenter().postNotificationName("segueToCommentsNotification", object: nil, userInfo: ["love": myPost])
+    }
 
+    
     
     @IBAction func deleteCell(sender: UIButton){
         FeedVC().deleteKey(post.postKey)
@@ -131,7 +149,7 @@ class PostCell: UITableViewCell {
     @IBAction func editBtnPress(sender: UIButton){
         var dictionary = ["disc": post.postDescription, "key": post.postKey]
 
-        NSNotificationCenter.defaultCenter().postNotificationName("editBtnNotification", object: nil, userInfo: [NSObject():dictionary])
+        NSNotificationCenter.defaultCenter().postNotificationName("editBtnNotification", object: nil, userInfo: dictionary)
         //FeedVC().editKey(post.postDescription, postKeyA: post.postKey)
     }
     

@@ -17,7 +17,7 @@ class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIIm
     
     @IBOutlet weak var postField: MaterialTextField!
     @IBOutlet weak var imageSelectorImg: UIImageView!
-    
+    @IBOutlet weak var submitTextBtn: UIButton!
     
     
     var imgPicker: UIImagePickerController!
@@ -33,14 +33,13 @@ class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIIm
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         postField.delegate = self
         tableView.delegate = self
         tableView.dataSource = self
-        print("mouse")
-        print(tableView)
-        print("cat")
-        tableView.estimatedRowHeight = 377
+
+        tableView.estimatedRowHeight = 330
+        tableView.rowHeight = UITableViewAutomaticDimension
+        
         
         imgPicker = UIImagePickerController()
         imgPicker.delegate = self
@@ -50,16 +49,12 @@ class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIIm
         //below is a closure, so it won't be called right away, only when data changes.  Even though this is in viewDidLoad it will be called over and over again.  .Value below gives us whole entire list of posts.  So we need to repopulate entire list when new data comes in
         
         var dictionaryOfUser = Dictionary<String, AnyObject>()
-
+        
         DataService.ds.REF_USERS.observeEventType(.Value, withBlock: { snapshotA in
             if let snapshotter = snapshotA.value as? Dictionary<String, AnyObject>{
                 dictionaryOfUser = snapshotter
-                print("woot")
-                print(dictionaryOfUser)
             }
             self.tableView.reloadData()
-            print("potter")
-            
         })
         
         
@@ -75,17 +70,13 @@ class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIIm
                         
                         if let id = postDict["userID"] as? String{
                             if let tempDict = dictionaryOfUser[id] as? Dictionary<String, AnyObject>{
-                                print("cannon")
-                                print(tempDict)
                                 let post = Post(postKey: key, dictionary: postDict, userInfo: tempDict)     //passing in the userinfo for the user that made that post
                                 self.posts.append(post)
                             }
                         }
-                        print("it's me")
                     }
                 }
             }
-            print("heyo")
             self.tableView.reloadData()
         })
 
@@ -98,6 +89,8 @@ class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIIm
         })
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(FeedVC.editKey(_:)), name: "editBtnNotification", object: nil)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(FeedVC.letsSegue(_:)), name: "segueToCommentsNotification", object: nil)
     }
     
     func lookAtSnapshot(completed: DownloadComplete){
@@ -131,14 +124,17 @@ class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIIm
         }
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        let post = posts[indexPath.row]
-        if post.imageUrl == nil{
-            return 150
-        } else{
-            return tableView.estimatedRowHeight
-        }
-    }
+    
+    //Don't need this b/c of our commands in viewdidload
+//    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+//        let post = posts[indexPath.row]
+//        if post.imageUrl == nil{
+//            return UITableViewAutomaticDimension
+//        } else{
+//            return tableView.estimatedRowHeight
+//        }
+//    }
+
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage, editingInfo: [String : AnyObject]?) {
         imgPicker.dismissViewControllerAnimated(true, completion: nil)
@@ -150,7 +146,9 @@ class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIIm
     }
     
     @IBAction func makePost(sender: AnyObject) {
-        textFieldShouldReturn(postField)
+        if inEditMode{
+            submitTextBtn.setTitle("POST", forState: .Normal)
+        }
         if let txt = postField.text where txt != ""{
             if let img = imageSelectorImg.image where imageSelectorImg.image != UIImage(named: "camera"){       //verifying here that we have an imag and that img is not default cam img
                 let urlString = "https://post.imageshack.us/upload_api.php"
@@ -165,7 +163,7 @@ class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIIm
                     multipartFormData.appendBodyPart(data: keyJSON, name: "format")
                 }) { encodingResult in      //performed when upload is done.  It will pass back an error or success value
                     switch encodingResult{
-                    case .Success(let upload, _, _): upload.responseJSON(completionHandler: { response in  //.success and .Failure are part ofthe multiPartFormData above
+                    case .Success(let upload, _, _): upload.responseJSON(completionHandler: { response in  //.success and .Failure are part of the multiPartFormData above
                         if let info = response.result.value as? Dictionary<String, AnyObject>{
                             if let links = info["links"] as? Dictionary<String, AnyObject>{
                                 if let imageLink = links["image_link"] as? String{
@@ -183,6 +181,7 @@ class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIIm
                 self.postToFirebase(nil)        //if we did not add an image then we will only post a description, so make imgURL nil, there has to be text in the text field b/c we checked for it above
             }
         }
+
     }
     
     func postToFirebase(imgURL: String?){
@@ -199,50 +198,94 @@ class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIIm
             post["imgURL"] = imgURL
         }
         
-        //call reference to POSTS url, add a child onto it by calling function childByAutoId(), then we set value of post
-        let firebasePost = DataService.ds.REF_POSTS.childByAutoId()
-        firebasePost.setValue(post)
+        print("is this right? \(submitTextBtn.currentTitle)")
         
-        //////////////////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////////////////////
-        let recordPostInUser = DataService.ds.REF_USERS_CURRENT.child("Posts").child(firebasePost.key)
-        recordPostInUser.setValue(true)
-        //////////////////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////////////////////
-        
+        if inEditMode{
+            inEditMode = false
+
+            print("i'm edited!")
+            DataService.ds.REF_POSTS.child(postKey).child("Description").setValue(postField.text)
+            
+            if imgURL != nil{
+                DataService.ds.REF_POSTS.child(postKey).child("imgURL").setValue(imgURL)
+            }
+            
+        } else{
+            print("I'm not edited")
+            let firebasePost = DataService.ds.REF_POSTS.childByAutoId()
+            firebasePost.setValue(post)
+            
+            //////////////////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////////////////
+            let recordPostInUser = DataService.ds.REF_USERS_CURRENT.child("Posts").child(firebasePost.key)
+            recordPostInUser.setValue(true)
+        }
+        textFieldShouldReturn(postField)
         postField.text = ""
         imageSelectorImg.image = UIImage(named: "camera")
         tableView.reloadData()
     }
 
     func textFieldShouldReturn(textField: UITextField) -> Bool {
-        self.view.endEditing(true)
+        dismissKeyboard()
         return false
     }
     
+    
+    
     func dismissKeyboard() {
-        //Causes the view (or one of its embedded text fields) to resign the first responder status.
+        if inEditMode{
+            inEditMode = false
+        }
+        postField.text = ""
         view.endEditing(true)
     }
     
     func deleteKey(postKeyA: String){
         DataService.ds.REF_POSTS.child(postKeyA).removeValue()
+        DataService.ds.REF_USERS_CURRENT.child("Posts").child(postKeyA).removeValue()
     }
     
+    var inEditMode: Bool = false
+    var postKey: String!
+    var postDesc: String!
+    
     func editKey(notification: NSNotification){
-        let postDesc = notification.userInfo!["disc"] as? String
-        let postKey = notification.userInfo!["key"] as? String
+        
+        postDesc = notification.userInfo!["disc"] as? String
+        postKey = notification.userInfo!["key"] as? String
         print(notification.userInfo)
         print("ahhh \(postDesc)")
         print("keyyy \(postKey)")
         self.postField.text = postDesc
         self.postField.becomeFirstResponder()
+        submitTextBtn.setTitle("EDIT", forState: .Normal)
+        inEditMode = true
         // DataService.ds.REF_POSTS.child(postKeyA).setValue()
     }
 
+    func letsSegue(notification: NSNotification){
+        print("nice 2")
+        var postForSegue = notification.userInfo
+        performSegueWithIdentifier("CommentVC", sender: postForSegue)
+    }
     
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        print("3 rhino")
+        if segue.identifier == "CommentVC"{
+            print("4 rhino")
+            if let commentVC = segue.destinationViewController as? CommentVC{
+                print("5 rhino")
+                print("snake \(sender)")
+                if let myPost = sender as? Dictionary<String, Post>{
+                    var myPostValue = myPost["love"]
+                    print("myHippo \(myPostValue)")
+                    commentVC.myPost = myPostValue
+                }
+            }
+        }
+    }
     
     @IBAction func settingsPage(sender: AnyObject){
         performSegueWithIdentifier("SettingVC", sender: nil)
